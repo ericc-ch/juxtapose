@@ -1,7 +1,7 @@
 {
-  "name": "starter-effect",
+  "name": "polarity",
   "version": "0.0.0",
-  "description": "A starter kit for a Vite + oRPC",
+  "description": "Polarity - a real-time multiplayer game",
   "type": "module",
   "scripts": {
     "db:generate": "drizzle-kit generate",

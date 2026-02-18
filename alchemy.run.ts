@@ -45,7 +45,7 @@ const remoteEnv =
     Schema.decodeUnknownSync(RemoteEnvSchema)(process.env)
   : null
 
-const app = await alchemy("starter-effect", {
+const app = await alchemy("polarity", {
   password: alchemyEnv.ALCHEMY_PASSWORD,
   stage: alchemyEnv.ALCHEMY_STAGE,
   stateStore: (scope: Scope) =>

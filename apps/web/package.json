@@ -1,7 +1,7 @@
 {
   "name": "web",
   "version": "0.0.0",
-  "description": "A starter kit for a Vite + oRPC",
+  "description": "Polarity Web",
   "type": "module",
   "exports": {
     "./env": "./src/lib/env.ts"
