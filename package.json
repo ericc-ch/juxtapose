@@ -20,7 +20,7 @@
     "@effect/language-service": "catalog:effect",
     "@libsql/client": "catalog:default",
     "@types/node": "catalog:default",
-    "alchemy": "^0.84.0",
+    "alchemy": "^0.85.1",
     "api": "workspace:*",
     "dotenv": "^17.3.1",
     "drizzle-kit": "catalog:drizzle",
