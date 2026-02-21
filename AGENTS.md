@@ -65,3 +65,8 @@ Always break down large changes into multiple focused atomic commits.
 - Naming - camelCase for variables/functions, PascalCase for types/components, kebab-case for files
 - No index.ts - Use main.ts instead (explicit names are easier to find)
 - Error handling - Use ORPCError for RPC errors; check .at(0) results before returning
+
+## App-Specific Guidelines
+
+- apps/web - See apps/web/AGENTS.md for Vite + React + TanStack Router specific guidelines
+- apps/api - See apps/api/AGENTS.md for Hono + oRPC + Cloudflare Workers specific guidelines
