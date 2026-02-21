@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { auth } from "@/lib/auth"
 import { useForm } from "@tanstack/react-form"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { Schema } from "effect"
@@ -28,11 +27,8 @@ const submitSchema = Schema.standardSchemaV1(
 
 type SubmitFormData = Schema.Schema.Type<typeof submitSchema>
 
-export const Route = createFileRoute("/submit")({
+export const Route = createFileRoute("/_layout/submit")({
   component: function Submit() {
-    const session = auth.useSession()
-    const user = session.data?.user
-
     const form = useForm({
       defaultValues: {
         repoUrl: "",
@@ -47,43 +43,9 @@ export const Route = createFileRoute("/submit")({
       },
     })
 
-    if (!user) {
-      return (
-        <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4">
-          <h1 className="text-h1">Sign in Required</h1>
-          <p className="text-muted-foreground text-center">
-            You need to sign in to submit a repository.
-          </p>
-          <Button
-            onClick={() =>
-              auth.signIn.social({
-                provider: "github",
-                callbackURL: window.location.href,
-              })
-            }
-          >
-            Sign in with GitHub
-          </Button>
-          <Link
-            to="/"
-            className="text-muted-foreground hover:text-foreground text-sm"
-          >
-            Back to home
-          </Link>
-        </div>
-      )
-    }
-
     return (
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <div className="mb-8 text-center">
-            <h1 className="text-h1">Submit Repository</h1>
-            <p className="text-muted-foreground">
-              Add a GitHub repository to track its issues
-            </p>
-          </div>
-
           <form
             onSubmit={(e) => {
               e.preventDefault()
