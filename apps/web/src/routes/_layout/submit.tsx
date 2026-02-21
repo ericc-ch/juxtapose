@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { RpcClientTag } from "@/lib/rpc"
+import { useAtomSet } from "@effect-atom/atom-react"
 import { useForm } from "@tanstack/react-form"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { Schema } from "effect"
@@ -29,6 +31,10 @@ type SubmitFormData = Schema.Schema.Type<typeof submitSchema>
 
 export const Route = createFileRoute("/_layout/submit")({
   component: function Submit() {
+    const submitRepo = useAtomSet(RpcClientTag.mutation("RepositorySubmit"), {
+      mode: "promise",
+    })
+
     const form = useForm({
       defaultValues: {
         repoUrl: "",
@@ -37,9 +43,12 @@ export const Route = createFileRoute("/_layout/submit")({
         onSubmit: submitSchema,
       },
       onSubmit: async ({ value }) => {
-        console.log("Submitting repository:", value.repoUrl)
-        // TODO: Implement actual submission via Effect RPC
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        const result = await submitRepo({
+          payload: { repoUrl: value.repoUrl },
+          reactivityKeys: ["repositories"],
+        })
+
+        console.log("Repository submitted:", result)
       },
     })
 

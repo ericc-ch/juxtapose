@@ -12,6 +12,7 @@ import { Database } from "./lib/db"
 import { EnvContext, EnvSchema } from "./lib/env"
 import { BooksHandlers } from "./rpc/books/handler"
 import { RootRpcGroup } from "./rpc/contract"
+import { RepositoriesHandlers } from "./rpc/repositories/handler"
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -57,6 +58,7 @@ export default {
     ).pipe(
       Layer.provide(RpcSerialization.layerJsonRpc()),
       Layer.provide(BooksHandlers),
+      Layer.provide(RepositoriesHandlers),
     )
 
     const CorsLayer = Effect.gen(function* () {
