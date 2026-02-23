@@ -665,7 +665,7 @@ packages/shared/src/
    - [x] books.sql.ts
    - [x] repositories.sql.ts
    - [x] run typecheck
-   - [ ] run tests if any
+   - [x] run tests if any
 
 2. [ ] **api package** - rewrite with hono (parallel to existing, test both)
    - [ ] lib/env.ts
