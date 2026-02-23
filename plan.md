@@ -70,13 +70,13 @@ export const BookUpdate = BookInsert.partial()
 export type BookUpdate = z.infer<typeof BookUpdate>
 ```
 
-- [ ] convert `Book` class to zod schema
-- [ ] convert `BookId` to zod schema
-- [ ] convert `BookInsert` to zod schema
-- [ ] convert `BookUpdate` to zod schema
-- [ ] export types with `z.infer`
-- [ ] remove effect imports
-- [ ] update `main.ts` exports if needed
+- [x] convert `Book` class to zod schema
+- [x] convert `BookId` to zod schema
+- [x] convert `BookInsert` to zod schema
+- [x] convert `BookUpdate` to zod schema
+- [x] export types with `z.infer`
+- [x] remove effect imports
+- [x] update `main.ts` exports if needed
 
 ### 2.2 schema/repositories.sql.ts
 

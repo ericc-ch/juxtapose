@@ -1,5 +1,5 @@
 import * as sqlite from "drizzle-orm/sqlite-core"
-import { Schema } from "effect"
+import { z } from "zod"
 
 export const books = sqlite.sqliteTable("books", {
   id: sqlite.integer().primaryKey({ autoIncrement: true }),
@@ -7,13 +7,18 @@ export const books = sqlite.sqliteTable("books", {
   author: sqlite.text().notNull(),
 })
 
-export const BookId = Schema.Number.pipe(Schema.int(), Schema.positive())
+export const BookId = z.number().int().positive()
 
-export class Book extends Schema.Class<Book>("Book")({
+export const Book = z.object({
   id: BookId,
-  title: Schema.String,
-  author: Schema.String,
-}) {}
+  title: z.string(),
+  author: z.string(),
+})
 
-export const BookInsert = Schema.Struct(Book.fields).pipe(Schema.omit("id"))
-export const BookUpdate = Schema.partial(BookInsert)
+export type Book = z.infer<typeof Book>
+
+export const BookInsert = Book.omit({ id: true })
+export type BookInsert = z.infer<typeof BookInsert>
+
+export const BookUpdate = BookInsert.partial()
+export type BookUpdate = z.infer<typeof BookUpdate>
