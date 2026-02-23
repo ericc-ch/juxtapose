@@ -180,3 +180,18 @@ Next: Begin working on first task.
   - apps/api/src/main.ts
   - plan.md
   - progress.txt
+
+---
+
+- Tasks completed in this session
+  - Determined rpc session helpers were unused and removed them
+  - Checked off rpc util session task items in plan
+- Decisions made and why
+  - Deleted `rpc/util/session.ts` because no imports or usage remain after Hono migration
+- Blockers encountered
+  - `pnpm run typecheck` fails due to missing Hono deps and lingering Effect-era rpc contract exports
+  - `pnpm run test` exits with no test files found
+- Files changed
+  - apps/api/src/rpc/util/session.ts
+  - plan.md
+  - progress.txt

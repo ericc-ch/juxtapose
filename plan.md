@@ -242,9 +242,9 @@ export class NotFoundError extends Error {
 
 ### 3.7 rpc/util/session.ts
 
-- [ ] determine if still needed (auth session validation)
-- [ ] if needed, convert to hono middleware or helper function
-- [ ] if not needed, delete
+- [x] determine if still needed (auth session validation)
+- [x] if needed, convert to hono middleware or helper function
+- [x] if not needed, delete
 
 ### 3.8 rpc/contract.ts
 
