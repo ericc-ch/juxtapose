@@ -1,6 +1,11 @@
 import { Input } from "@/components/ui/input"
 import { RpcClientTag } from "@/lib/rpc"
-import { useAtomValue, useAtomSubscribe, Result } from "@effect-atom/atom-react"
+import {
+  useAtomValue,
+  useAtomMount,
+  useAtomSubscribe,
+  Result,
+} from "@effect-atom/atom-react"
 import { createFileRoute } from "@tanstack/react-router"
 import { useMemo, useState } from "react"
 
@@ -17,6 +22,7 @@ export const Route = createFileRoute("/_layout/")({
       () => RpcClientTag.query("RepositoryList", {}),
       [],
     )
+    useAtomMount(reposAtom)
     const reposResult = useAtomValue(reposAtom)
 
     useAtomSubscribe(
