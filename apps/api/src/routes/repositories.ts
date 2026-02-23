@@ -6,19 +6,23 @@ import {
   RepositoryFullName,
   repositories as repositoriesTable,
 } from "shared/schema"
-import { createDB } from "../lib/db"
+import type { Database } from "../lib/db"
 import type { Env } from "../lib/env"
 
 type Bindings = Env & { DB: D1Database }
+
+type Variables = {
+  db: Database
+}
 
 const submitSchema = z.object({
   repoUrl: z.string().min(1),
 })
 
-const app = new Hono<{ Bindings: Bindings }>()
+const app = new Hono<{ Bindings: Bindings; Variables: Variables }>()
 
 app.get("/", async (c) => {
-  const db = createDB(c.env.DB)
+  const db = c.get("db")
   const data = await db.select().from(repositoriesTable)
   return c.json({ data })
 })
@@ -32,7 +36,7 @@ app.post("/", zValidator("json", submitSchema), async (c) => {
   }
 
   const { fullName } = parseResult
-  const db = createDB(c.env.DB)
+  const db = c.get("db")
 
   const existing = await db
     .select()

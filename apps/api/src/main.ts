@@ -1,6 +1,7 @@
 import { Hono } from "hono"
 import { cors } from "hono/cors"
 import { createAuth } from "./lib/auth"
+import { createDB, type Database } from "./lib/db"
 import { parseEnv, type Env } from "./lib/env"
 import booksRoutes from "./routes/books"
 import repositoriesRoutes from "./routes/repositories"
@@ -9,12 +10,13 @@ type Bindings = Env & { DB: D1Database }
 
 const app = new Hono<{
   Bindings: Bindings
-  Variables: { parsedEnv: Env }
+  Variables: { parsedEnv: Env; db: Database }
 }>()
 
 app.use("*", async (c, next) => {
   const parsedEnv = parseEnv(c.env as unknown as Record<string, string>)
   c.set("parsedEnv", parsedEnv)
+  c.set("db", createDB(c.env.DB))
   return cors({
     origin: parsedEnv.API_CORS_ORIGIN,
     credentials: true,

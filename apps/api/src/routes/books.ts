@@ -3,20 +3,24 @@ import { eq } from "drizzle-orm"
 import { Hono } from "hono"
 import { z } from "zod"
 import { BookInsert, BookUpdate, books as booksTable } from "shared/schema"
-import { createDB } from "../lib/db"
+import type { Database } from "../lib/db"
 import type { Env } from "../lib/env"
 
 type Bindings = Env & { DB: D1Database }
+
+type Variables = {
+  db: Database
+}
 
 const bookIdParamSchema = z.object({
   id: z.coerce.number().int().positive(),
 })
 
-const app = new Hono<{ Bindings: Bindings }>()
+const app = new Hono<{ Bindings: Bindings; Variables: Variables }>()
 
 app.get("/:id", zValidator("param", bookIdParamSchema), async (c) => {
   const { id } = c.req.valid("param")
-  const db = createDB(c.env.DB)
+  const db = c.get("db")
 
   const data = await db
     .select()
@@ -33,14 +37,14 @@ app.get("/:id", zValidator("param", bookIdParamSchema), async (c) => {
 })
 
 app.get("/", async (c) => {
-  const db = createDB(c.env.DB)
+  const db = c.get("db")
   const data = await db.select().from(booksTable)
   return c.json({ data })
 })
 
 app.post("/", zValidator("json", BookInsert), async (c) => {
   const payload = c.req.valid("json")
-  const db = createDB(c.env.DB)
+  const db = c.get("db")
   const inserted = await db.insert(booksTable).values(payload).returning()
   const book = inserted.at(0)
 
@@ -58,7 +62,7 @@ app.patch(
   async (c) => {
     const { id } = c.req.valid("param")
     const data = c.req.valid("json")
-    const db = createDB(c.env.DB)
+    const db = c.get("db")
     const updated = await db
       .update(booksTable)
       .set(data)
@@ -77,7 +81,7 @@ app.patch(
 
 app.delete("/:id", zValidator("param", bookIdParamSchema), async (c) => {
   const { id } = c.req.valid("param")
-  const db = createDB(c.env.DB)
+  const db = c.get("db")
   const deleted = await db
     .delete(booksTable)
     .where(eq(booksTable.id, id))
