@@ -125,11 +125,11 @@ export const parseEnv = (env: Record<string, string>): Env => {
 }
 ```
 
-- [ ] create zod schema for env vars
-- [ ] export `Env` type
-- [ ] create `parseEnv` function
-- [ ] remove effect schema imports
-- [ ] delete `EnvContext`
+- [x] create zod schema for env vars
+- [x] export `Env` type
+- [x] create `parseEnv` function
+- [x] remove effect schema imports
+- [x] delete `EnvContext`
 
 ### 3.2 lib/db.ts
 

@@ -52,3 +52,20 @@ Next: Begin working on first task.
 - Files changed
   - plan.md
   - progress.txt
+
+---
+
+- Tasks completed in this session
+  - Converted api env parsing to zod with defaults
+  - Added parseEnv and Env type exports
+  - Checked off env task items in plan
+- Decisions made and why
+  - Used `z.url()` to satisfy lint deprecation warnings
+  - Kept `EnvType` as alias to ease transition of existing imports
+- Blockers encountered
+  - `pnpm run typecheck` fails due to remaining Effect-based env usage and mixed Zod/Effect schemas in api rpc files
+  - `pnpm run test` exits with no test files found
+- Files changed
+  - apps/api/src/lib/env.ts
+  - plan.md
+  - progress.txt
