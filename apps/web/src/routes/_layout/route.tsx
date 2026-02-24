@@ -19,7 +19,7 @@ function LayoutComponent() {
             to="/"
             className="text-foreground font-mono text-sm font-medium"
           >
-            polarity
+            juxtapose
           </Link>
 
           <div className="flex items-center gap-2">

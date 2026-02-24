@@ -31,7 +31,7 @@ const apiEnv = apiEnvSchema.parse(process.env)
 const remoteEnv =
   alchemyEnv.ALCHEMY_REMOTE_STATE ? RemoteEnvSchema.parse(process.env) : null
 
-const app = await alchemy("polarity", {
+const app = await alchemy("juxtapose", {
   password: alchemyEnv.ALCHEMY_PASSWORD,
   stage: alchemyEnv.ALCHEMY_STAGE,
   stateStore: (scope: Scope) =>

@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api"
 import { Button } from "@/components/ui/button"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, Link, notFound } from "@tanstack/react-router"
 import type { Repository } from "shared"
 
@@ -24,6 +24,26 @@ function formatDate(timestamp: number): string {
 
 function RepoDetailsPage() {
   const { owner, repo } = Route.useParams()
+  const queryClient = useQueryClient()
+
+  const syncMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiClient.api.repositories[":owner"][
+        ":repo"
+      ].sync.$post({
+        param: { owner, repo },
+      })
+      if (!res.ok) {
+        throw new Error("Failed to sync repository")
+      }
+      return res.json()
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["repository", owner, repo],
+      })
+    },
+  })
 
   const {
     data: repoData,
@@ -108,7 +128,13 @@ function RepoDetailsPage() {
           )}
         </div>
 
-        <Button className="w-full">Update repo</Button>
+        <Button
+          className="w-full"
+          onClick={() => syncMutation.mutate()}
+          disabled={syncMutation.isPending}
+        >
+          {syncMutation.isPending ? "Syncing..." : "Update repo"}
+        </Button>
       </div>
     </div>
   )

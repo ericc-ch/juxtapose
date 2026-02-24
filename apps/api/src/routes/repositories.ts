@@ -118,5 +118,48 @@ const app = new Hono<HonoContext>()
       return c.json(newRepo, 201)
     },
   )
+  .post("/:owner/:repo/sync", protectedMiddleware, async (c) => {
+    const owner = c.req.param("owner")
+    const repo = c.req.param("repo")
+
+    // Get user's GitHub OAuth token
+    const tokenResponse = await c.var.auth.api.getAccessToken({
+      headers: c.req.raw.headers,
+      body: {
+        providerId: "github",
+      },
+    })
+
+    if (!tokenResponse.accessToken) {
+      return c.json({ error: "No GitHub account linked" }, 400)
+    }
+
+    const octokit = new Octokit({ auth: tokenResponse.accessToken })
+
+    // Fetch 1 issue
+    const { data: issues } = await octokit.rest.issues.listForRepo({
+      owner,
+      repo,
+      state: "open",
+      per_page: 1,
+    })
+
+    // Fetch 1 PR
+    const { data: pulls } = await octokit.rest.pulls.list({
+      owner,
+      repo,
+      state: "open",
+      per_page: 1,
+    })
+
+    console.log("Fetched issue:", issues[0])
+    console.log("Fetched PR:", pulls[0])
+
+    return c.json({
+      success: true,
+      issue: issues[0] ?? null,
+      pullRequest: pulls[0] ?? null,
+    })
+  })
 
 export default app
