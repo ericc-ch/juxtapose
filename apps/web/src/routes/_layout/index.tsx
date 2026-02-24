@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input"
 import { apiClient } from "@/lib/api"
 import { useQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { useMemo, useState } from "react"
 
 interface Repository {
@@ -88,28 +88,28 @@ export const Route = createFileRoute("/_layout/")({
           <div className="text-muted-foreground py-8 text-center">
             No repositories found
           </div>
-        : filteredRepos.map((repo) => (
-            <div
-              key={repo.fullName}
-              className="flex items-center justify-between"
-              role="listitem"
-            >
-              <div className="truncate font-mono text-sm">
-                <span className="text-muted-foreground">
-                  {repo.fullName.split("/")[0]}/
+        : filteredRepos.map((repo) => {
+            const [owner, repoName] = repo.fullName.split("/")
+            return (
+              <Link
+                key={repo.fullName}
+                to="/repos/$owner/$repo"
+                params={{ owner: owner!, repo: repoName! }}
+                className="flex items-center justify-between"
+                role="listitem"
+              >
+                <div className="truncate font-mono text-sm">
+                  <span className="text-muted-foreground">{owner}/</span>
+                  <span className="text-foreground">{repoName}</span>
+                </div>
+                <span className="w-20 text-right">
+                  {repo.lastSyncAt && repo.lastSyncAt > 0 ?
+                    formatRelativeTime(repo.lastSyncAt)
+                  : "Queued"}
                 </span>
-                <span className="text-foreground">
-                  {repo.fullName.split("/")[1]}
-                </span>
-              </div>
-
-              <span className="w-20 text-right">
-                {repo.lastSyncAt && repo.lastSyncAt > 0 ?
-                  formatRelativeTime(repo.lastSyncAt)
-                : "Queued"}
-              </span>
-            </div>
-          ))
+              </Link>
+            )
+          })
         }
       </div>
     )
