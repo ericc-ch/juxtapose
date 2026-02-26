@@ -5,15 +5,11 @@
   "scripts": {
     "db:generate": "drizzle-kit generate",
     "dev": "alchemy dev",
-    "format": "prettier --write .",
+    "format": "oxfmt",
     "lint": "oxlint --type-aware",
     "prepare": "simple-git-hooks",
     "test": "vitest",
     "typecheck": "tsc --build"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm run format",
-    "pre-push": "pnpm run typecheck && pnpm run lint"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:cloudflare",
@@ -23,6 +19,7 @@
     "api": "workspace:*",
     "dotenv": "^17.3.1",
     "drizzle-kit": "catalog:drizzle",
+    "oxfmt": "^0.35.0",
     "oxlint": "^1.50.0",
     "oxlint-tsgolint": "^0.14.2",
     "prettier": "^3.8.1",
@@ -32,6 +29,10 @@
     "vitest": "catalog:vite",
     "wrangler": "catalog:cloudflare",
     "zod": "catalog:default"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm run format",
+    "pre-push": "pnpm run typecheck && pnpm run lint"
   },
   "packageManager": "pnpm@10.30.2",
   "pnpm": {
