@@ -1,16 +1,14 @@
 import { createMiddleware } from "hono/factory"
 import type { HonoContext } from "../types"
 
-export const protectedMiddleware = createMiddleware<HonoContext>(
-  async (c, next) => {
-    const session = await c.var.auth.api.getSession({
-      headers: c.req.raw.headers,
-    })
+export const protectedMiddleware = createMiddleware<HonoContext>(async (c, next) => {
+  const session = await c.var.auth.api.getSession({
+    headers: c.req.raw.headers,
+  })
 
-    if (!session) {
-      return c.json({ error: "Unauthorized" }, 401)
-    }
+  if (!session) {
+    return c.json({ error: "Unauthorized" }, 401)
+  }
 
-    return await next()
-  },
-)
+  return await next()
+})
