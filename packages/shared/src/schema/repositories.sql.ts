@@ -1,5 +1,5 @@
 import * as sqlite from "drizzle-orm/sqlite-core"
-import { createInsertSchema, createSelectSchema } from "drizzle-zod"
+import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const repositories = sqlite.sqliteTable(
@@ -15,25 +15,11 @@ export const repositories = sqlite.sqliteTable(
   (table) => [sqlite.unique("owner_repo_unique").on(table.owner, table.repo)],
 )
 
-const RepoName = z.string().regex(/^[a-zA-Z0-9._-]+$/)
+export const repositorySchema = createSelectSchema(repositories)
+export type Repository = z.infer<typeof repositorySchema>
 
-export const Repository = createSelectSchema(repositories, {
-  owner: RepoName,
-  repo: RepoName,
-})
+export const repositoryInsertSchema = createInsertSchema(repositories)
+export type RepositoryInsert = z.infer<typeof repositoryInsertSchema>
 
-export type Repository = z.infer<typeof Repository>
-
-export const RepositoryInsert = createInsertSchema(repositories, {
-  owner: RepoName,
-  repo: RepoName,
-})
-
-export type RepositoryInsert = z.infer<typeof RepositoryInsert>
-
-export const RepositoryUpdate = createInsertSchema(repositories, {
-  owner: RepoName,
-  repo: RepoName,
-}).partial()
-
-export type RepositoryUpdate = z.infer<typeof RepositoryUpdate>
+export const repositoryUpdateSchema = createUpdateSchema(repositories)
+export type RepositoryUpdate = z.infer<typeof repositoryUpdateSchema>
