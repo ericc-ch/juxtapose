@@ -6,6 +6,7 @@ export const envSchema = z.object({
   API_BETTER_AUTH_URL: z.url().default("http://localhost:1337"),
   API_GITHUB_CLIENT_ID: z.string().min(1),
   API_GITHUB_CLIENT_SECRET: z.string().min(1),
+  API_BUCKET_URL: z.string(),
 })
 
 export type ParsedEnv = z.infer<typeof envSchema>

@@ -3,6 +3,7 @@ import type { Database } from "./lib/db"
 
 type EnvWithStorage = Env & {
   STORAGE: R2Bucket
+  STORAGE_DOMAIN: string
 }
 
 type Auth = ReturnType<typeof createAuth>

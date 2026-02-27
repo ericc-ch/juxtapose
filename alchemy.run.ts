@@ -17,8 +17,9 @@ const alchemyEnvSchema = z.object({
 })
 
 const remoteEnvSchema = z.object({
-  WEB_DOMAIN: z.string().min(1),
-  API_DOMAIN: z.string().min(1),
+  WEB_DOMAIN: z.string().min(1).optional(),
+  API_DOMAIN: z.string().min(1).optional(),
+  EMBEDDINGS_BUCKET_DOMAIN: z.string().min(1),
 })
 
 const alchemyEnvRaw = alchemyEnvSchema.parse(process.env)
@@ -28,13 +29,15 @@ const alchemyEnv = {
 }
 
 const apiEnv = apiEnvSchema.parse(process.env)
-const remoteEnv = alchemyEnv.ALCHEMY_REMOTE_STATE ? remoteEnvSchema.parse(process.env) : null
+const remoteEnv = remoteEnvSchema.parse(process.env)
 
 const app = await alchemy("juxtapose", {
   password: alchemyEnv.ALCHEMY_PASSWORD,
   stage: alchemyEnv.ALCHEMY_STAGE,
   stateStore: (scope: Scope) =>
-    remoteEnv ? new CloudflareStateStore(scope) : new FileSystemStateStore(scope),
+    alchemyEnv.ALCHEMY_REMOTE_STATE
+      ? new CloudflareStateStore(scope)
+      : new FileSystemStateStore(scope),
 })
 
 await Exec("db-generate", {
@@ -45,18 +48,23 @@ const db = await D1Database("db", {
   migrationsDir: "./migrations/",
 })
 
-const storage = await R2Bucket("embeddings", {
-  domains: remoteEnv ? [remoteEnv.API_DOMAIN] : [],
+const embeddingsBucket = await R2Bucket("embeddings-bucket", {
+  adopt: true,
+  domains: remoteEnv.EMBEDDINGS_BUCKET_DOMAIN ? [remoteEnv.EMBEDDINGS_BUCKET_DOMAIN] : [],
+  dev: {
+    remote: true,
+  },
 })
 
 export const api = await Worker("api", {
   cwd: "./apps/api",
   entrypoint: "./src/main.ts",
   compatibility: "node",
-  domains: remoteEnv ? [remoteEnv.API_DOMAIN] : [],
+  domains: remoteEnv.API_DOMAIN ? [remoteEnv.API_DOMAIN] : [],
   bindings: {
     DB: db,
-    STORAGE: storage,
+    STORAGE: embeddingsBucket,
+    API_BUCKET_URL: apiEnv.API_BUCKET_URL,
     API_CORS_ORIGIN: apiEnv.API_CORS_ORIGIN,
     API_BETTER_AUTH_SECRET: alchemy.secret(apiEnv.API_BETTER_AUTH_SECRET),
     API_BETTER_AUTH_URL: apiEnv.API_BETTER_AUTH_URL,
@@ -68,7 +76,7 @@ export const api = await Worker("api", {
 export const web = await TanStackStart("web", {
   cwd: "./apps/web",
   compatibility: "node",
-  domains: remoteEnv ? [remoteEnv.WEB_DOMAIN] : [],
+  domains: remoteEnv.WEB_DOMAIN ? [remoteEnv.WEB_DOMAIN] : [],
 })
 
 console.log(`Web -> ${web.url}`)

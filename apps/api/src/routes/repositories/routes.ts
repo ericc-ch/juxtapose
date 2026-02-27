@@ -245,7 +245,7 @@ export const repositoriesRoutes = new Hono<HonoContext>()
       // Compress and write to R2
       const json = JSON.stringify(vectorObject)
       const compressed = await compressGzip(json)
-      await storage?.put(objectKey, compressed, {
+      const object = await storage?.put(objectKey, compressed, {
         httpMetadata: { contentType: "application/gzip" },
       })
 
