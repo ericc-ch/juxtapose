@@ -119,17 +119,16 @@ export const repositoriesRoutes = new Hono<HonoContext>()
 
     try {
       const since = repository.lastSyncAt > 0 ? new Date(repository.lastSyncAt).toISOString() : null
-
-      // Fetch existing vector object from R2 if it exists
       const objectKey = `${owner}/${repo}.json.gz`
+
       let existingVectorObject: VectorObject | null = null
-      const existingData = await storage?.get(objectKey)
+      const existingData = await storage.get(objectKey)
+
       if (existingData) {
         const decompressed = await decompressGzip(await existingData.arrayBuffer())
         existingVectorObject = JSON.parse(decompressed) as VectorObject
       }
 
-      // Fetch from GitHub
       const { repository: githubRepo } = await octokit.graphql<GraphQLResponse>(
         FETCH_REPO_DATA_QUERY,
         {
@@ -245,7 +244,7 @@ export const repositoriesRoutes = new Hono<HonoContext>()
       // Compress and write to R2
       const json = JSON.stringify(vectorObject)
       const compressed = await compressGzip(json)
-      await storage?.put(objectKey, compressed, {
+      await storage.put(objectKey, compressed, {
         httpMetadata: { contentType: "application/gzip" },
       })
 
