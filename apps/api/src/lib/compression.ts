@@ -1,15 +1,14 @@
-import { gzip, gunzip } from "node:zlib"
-import { promisify } from "node:util"
+/**
+ * Uses Web Compression Streams API instead of Node.js zlib to avoid bundling
+ * Node-only modules in the frontend.
+ */
 
-const gzipAsync = promisify(gzip)
-const gunzipAsync = promisify(gunzip)
-
-export async function compressGzip(text: string): Promise<Buffer> {
-  return gzipAsync(text, { level: 9 })
+export async function compress(text: string): Promise<Uint8Array> {
+  const stream = new Blob([text]).stream().pipeThrough(new CompressionStream("gzip"))
+  return new Uint8Array(await new Response(stream).arrayBuffer())
 }
 
-export async function decompressGzip(buffer: Buffer | ArrayBuffer): Promise<string> {
-  const buf = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer)
-  const result = await gunzipAsync(buf)
-  return result.toString("utf-8")
+export async function decompress(data: BufferSource): Promise<string> {
+  const stream = new Blob([data]).stream().pipeThrough(new DecompressionStream("gzip"))
+  return new Response(stream).text()
 }
